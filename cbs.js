@@ -1,4 +1,6 @@
 // --- Fake Writeoffs Data ---
+alert("cbs.js has loaded successfully!");
+
 const fakeWriteoffs = [
   {
     client: "Demo Client A",
