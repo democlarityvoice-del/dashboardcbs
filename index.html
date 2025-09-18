@@ -37,84 +37,96 @@
 </div>
 
 
-
-    <!-- Main Content Writeoff Section-->
-    <main class="flex-1 overflow-y-auto p-6">
-      <div id="tab-writeoffs">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold">Writeoffs</h2>
-          <button onclick="exportCSV()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded shadow">
-            Export CSV
-          </button>
+      
+      <!-- Main Content Writeoff Section-->
+      <main class="flex-1 overflow-y-auto p-6">
+        <div id="tab-writeoffs">
+          <!-- Top Header: Title + Export -->
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold">Writeoffs</h2>
+            <button onclick="exportCSV()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded shadow">
+              Export CSV
+            </button>
+          </div>
+      
+          <!-- Date Range + Load Button -->
+          <div class="mb-6">
+            <div class="flex items-center flex-wrap gap-4">
+              <label class="text-sm font-medium">Start Date:</label>
+              <input type="date" id="startDate" class="border rounded px-2 py-1" />
+              <label class="text-sm font-medium">End Date:</label>
+              <input type="date" id="endDate" class="border rounded px-2 py-1" />
+              <button onclick="loadWriteoffData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+                Load Writeoff Data
+              </button>
+            </div>
+            <div id="dateWarning" class="mt-2 text-orange-700 text-sm hidden">
+              ⚠️ Up to 12 months of data <span class="italic">may</span> be exported.
+              It is safest to keep data pulls under 6 months when possible.
+            </div>
+          </div>
+      
+          <!-- Writeoff Entries Will Load Here -->
+          <div id="writeoff-container" class="space-y-4"></div>
         </div>
-
-
-        <!-- Date Range Controls -->
-      <div class="mb-6">
-        <div class="flex items-center flex-wrap gap-4">
-          <label class="text-sm font-medium">Start Date:</label>
-          <input type="date" id="startDate" class="border rounded px-2 py-1" />
-          <label class="text-sm font-medium">End Date:</label>
-          <input type="date" id="endDate" class="border rounded px-2 py-1" />
-          <button onclick="loadWriteoffData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-            Load Writeoff Data
-          </button>
+      
+        <!-- Placeholder Tabs -->
+        <div id="tab-lostrevenue" class="hidden">
+          <h2 class="text-2xl font-bold mb-4">Lost Revenue</h2>
+          <p>Coming soon...</p>
         </div>
-        <div id="dateWarning" class="mt-2 text-orange-700 text-sm hidden">
-          ⚠️ Up to 12 months of data <span class="italic">may</span> be exported.
-          It is safest to keep data pulls under 6 months when possible.
+        <div id="tab-comparison" class="hidden">
+          <h2 class="text-2xl font-bold mb-4">Merged Analysis</h2>
+          <p>Coming soon...</p>
         </div>
-      </div>
-  
-  <script>
-    function loadWriteoffData() {
-      const startInput = document.getElementById("startDate").value;
-      const endInput = document.getElementById("endDate").value;
-      const warning = document.getElementById("dateWarning");
-  
-      if (!startInput || !endInput) {
-        alert("Please select both a start and end date.");
-        return;
-      }
-  
-      const startDate = new Date(startInput);
-      const endDate = new Date(endInput);
-  
-      if (startDate > endDate) {
-        alert("Start date must be before end date.");
-        return;
-      }
-  
-      const oneDay = 1000 * 60 * 60 * 24;
-      const dayDiff = Math.round((endDate - startDate) / oneDay);
-  
-      // Check if over 365
-      if (dayDiff > 365) {
-        alert("Maximum date range is 365 days.");
-        return;
-      }
-  
-      // Show warning if over 183 (6 months)
-      if (dayDiff > 183) {
-        warning.classList.remove("hidden");
-      } else {
-        warning.classList.add("hidden");
-      }
-  
-      // Placeholder for future POST to n8n or similar
-      console.log("Pretending to send a POST request with:", {
-        start: startInput,
-        end: endInput
-      });
-  
-      // You can replace this with fetch() when you're ready:
-      // fetch("https://your-n8n-endpoint", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ startDate: startInput, endDate: endInput })
-      // }).then(...)
-    }
-  </script>
+      </main>
+      
+      <script>
+        function loadWriteoffData() {
+          const startInput = document.getElementById("startDate").value;
+          const endInput = document.getElementById("endDate").value;
+          const warning = document.getElementById("dateWarning");
+      
+          if (!startInput || !endInput) {
+            alert("Please select both a start and end date.");
+            return;
+          }
+      
+          const startDate = new Date(startInput);
+          const endDate = new Date(endInput);
+      
+          if (startDate > endDate) {
+            alert("Start date must be before end date.");
+            return;
+          }
+      
+          const oneDay = 1000 * 60 * 60 * 24;
+          const dayDiff = Math.round((endDate - startDate) / oneDay);
+      
+          if (dayDiff > 365) {
+            alert("Maximum date range is 365 days.");
+            return;
+          }
+      
+          if (dayDiff > 183) {
+            warning.classList.remove("hidden");
+          } else {
+            warning.classList.add("hidden");
+          }
+      
+          // This is where your future POST to n8n will go
+          console.log("Ready to POST this date range to n8n:", {
+            start: startInput,
+            end: endInput
+          });
+        }
+      
+        function exportCSV() {
+          // Placeholder for export logic – assumed you’ll hook this to your existing writeoffData array
+          alert("CSV Export triggered (hook this up to your table data)!");
+        }
+      </script>
+
 
         <div id="writeoff-container" class="space-y-4"></div>
       </div>
