@@ -4,281 +4,200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Writeoff Dashboard</title>
+  <title>Write-Off Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans">
-  <div class="flex h-screen">
+<body class="bg-gray-50 p-6">
+  <!-- Page Title -->
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">Write-Off Dashboard</h1>
 
-    <!-- Sidebar Menu-->
-    <aside class="w-64 bg-white shadow-lg p-4 space-y-4">
-      <h1 class="text-xl font-bold text-orange-600">Clarity Dashboard</h1>
-      <nav class="flex flex-col space-y-2">
-        <button onclick="switchTab('writeoffs')" class="text-left px-2 py-1 rounded hover:bg-orange-100" id="btn-writeoffs">Writeoffs</button>
-        <button onclick="switchTab('lostrevenue')" class="text-left px-2 py-1 rounded hover:bg-orange-100" id="btn-lostrevenue">Lost Revenue</button>
-        <button onclick="switchTab('comparison')" class="text-left px-2 py-1 rounded hover:bg-orange-100" id="btn-comparison">Merged Analysis</button>
-      </nav>
-    </aside>
-
-   <!-- Date Range Selector -->
-<div class="mb-6 space-y-2">
-  <div class="flex items-center space-x-4">
-    <label class="text-sm">Start Date:</label>
-    <input type="date" id="startDate" class="border rounded px-2 py-1" />
-    <label class="text-sm">End Date:</label>
-    <input type="date" id="endDate" class="border rounded px-2 py-1" />
-    <button onclick="loadWriteoffData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-      Load Writeoff Data
-    </button>
-  </div>
-  <div id="dateWarning" class="text-red-600 text-sm hidden">
-    ⚠️ Up to 12 months of data <span class="italic">may</span> be exported. It is safest to keep data pulls under 6 months when possible.
-  </div>
-</div>
-
-
-      
-      <!-- Main Content Writeoff Section-->
-      <main class="flex-1 overflow-y-auto p-6">
-        <div id="tab-writeoffs">
-          <!-- Top Header: Title + Export -->
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold">Writeoffs</h2>
-            <button onclick="exportCSV()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded shadow">
-              Export CSV
-            </button>
-          </div>
-      
-          <!-- Date Range + Load Button -->
-          <div class="mb-6">
-            <div class="flex items-center flex-wrap gap-4">
-              <label class="text-sm font-medium">Start Date:</label>
-              <input type="date" id="startDate" class="border rounded px-2 py-1" />
-              <label class="text-sm font-medium">End Date:</label>
-              <input type="date" id="endDate" class="border rounded px-2 py-1" />
-              <button onclick="loadWriteoffData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-                Load Writeoff Data
-              </button>
-            </div>
-            <div id="dateWarning" class="mt-2 text-orange-700 text-sm hidden">
-              ⚠️ Up to 12 months of data <span class="italic">may</span> be exported.
-              It is safest to keep data pulls under 6 months when possible.
-            </div>
-          </div>
-      
-          <!-- Writeoff Entries Will Load Here -->
-          <div id="writeoff-container" class="space-y-4"></div>
-        </div>
-      
-        <!-- Placeholder Tabs -->
-        <div id="tab-lostrevenue" class="hidden">
-          <h2 class="text-2xl font-bold mb-4">Lost Revenue</h2>
-          <p>Coming soon...</p>
-        </div>
-        <div id="tab-comparison" class="hidden">
-          <h2 class="text-2xl font-bold mb-4">Merged Analysis</h2>
-          <p>Coming soon...</p>
-        </div>
-      </main>
-      
-      <script>
-        function loadWriteoffData() {
-          const startInput = document.getElementById("startDate").value;
-          const endInput = document.getElementById("endDate").value;
-          const warning = document.getElementById("dateWarning");
-      
-          if (!startInput || !endInput) {
-            alert("Please select both a start and end date.");
-            return;
-          }
-      
-          const startDate = new Date(startInput);
-          const endDate = new Date(endInput);
-      
-          if (startDate > endDate) {
-            alert("Start date must be before end date.");
-            return;
-          }
-      
-          const oneDay = 1000 * 60 * 60 * 24;
-          const dayDiff = Math.round((endDate - startDate) / oneDay);
-      
-          if (dayDiff > 365) {
-            alert("Maximum date range is 365 days.");
-            return;
-          }
-      
-          if (dayDiff > 183) {
-            warning.classList.remove("hidden");
-          } else {
-            warning.classList.add("hidden");
-          }
-      
-          // This is where your future POST to n8n will go
-          console.log("Ready to POST this date range to n8n:", {
-            start: startInput,
-            end: endInput
-          });
-        }
-      
-        function exportCSV() {
-          // Placeholder for export logic – assumed you’ll hook this to your existing writeoffData array
-          alert("CSV Export triggered (hook this up to your table data)!");
-        }
-      </script>
-
-
-        <div id="writeoff-container" class="space-y-4"></div>
-      </div>
-
-      <div id="tab-lostrevenue" class="hidden">
-        <h2 class="text-2xl font-bold mb-4">Lost Revenue</h2>
-        <p>Coming soon...</p>
-      </div>
-
-      <div id="tab-comparison" class="hidden">
-        <h2 class="text-2xl font-bold mb-4">Merged Analysis</h2>
-        <p>Coming soon...</p>
-      </div>
-    </main>
+  <!-- Date Range Selector -->
+  <div class="mb-6 space-y-2">
+    <div class="flex items-center space-x-4">
+      <label class="text-sm">Start Date:</label>
+      <input type="date" id="startDate" class="border rounded px-2 py-1" />
+      <label class="text-sm">End Date:</label>
+      <input type="date" id="endDate" class="border rounded px-2 py-1" />
+      <button onclick="loadWriteoffData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+        Load Writeoff Data
+      </button>
+      <button onclick="exportCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">
+        Export to CSV
+      </button>
+    </div>
+    <div id="dateWarning" class="text-red-600 text-sm hidden">
+      ⚠️ Up to 12 months of data <span class="italic">may</span> be exported. It is safest to keep data pulls under 6 months when possible.
+    </div>
   </div>
 
+  <!-- Writeoff Container -->
+  <div id="writeoff-container" class="space-y-6"></div>
+
+  <!-- Main Script Block -->
   <script>
-
-// ========== Mock Writeoff Data ==========
+    // ========== MOCK WRITE-OFF DATA ==========
     const writeoffData = [
-  {
-    customer_name: "Demo Client A",
-    customer_id: "000123",
-    writeoff_id: "WO-10001",
-    reference_id: "Adjustment - Services",
-    writeoff_date: "2025-09-01",
-    writeoff_amount: "99.99",
-    invoices: [
       {
-        invoice_id: 111222,
-        invoice_writeoff_amount: "50.00",
-        invoice_date: "2025-08-15",
-        items: [
-          { description: "Monthly Service Fee", item_count: 1 },
-          { description: "Tax Adjustment", item_count: 1 }
-        ]
-      }
-    ]
-  }
-];
+        writeoffId: "WR-1001",
+        total: 324.65,
+        date: "2024-08-21",
+        reason: "System Error",
+        invoices: [
+          {
+            invoiceId: "INV-101",
+            customer: "Acme Corp",
+            amount: 200.45,
+            items: [
+              { description: "Phone Line", amount: 100.25 },
+              { description: "Voicemail Add-on", amount: 100.20 },
+            ],
+          },
+          {
+            invoiceId: "INV-102",
+            customer: "Acme Corp",
+            amount: 124.20,
+            items: [
+              { description: "Toll-Free Number", amount: 124.20 },
+            ],
+          },
+        ],
+      },
+      {
+        writeoffId: "WR-1002",
+        total: 75.00,
+        date: "2024-08-29",
+        reason: "Customer Satisfaction",
+        invoices: [
+          {
+            invoiceId: "INV-200",
+            customer: "Beta Inc",
+            amount: 75.00,
+            items: [
+              { description: "Service Fee", amount: 75.00 },
+            ],
+          },
+        ],
+      },
+    ];
 
-// ======== Tab Switching ========
-
-    function switchTab(tab) {
-      document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add("hidden"));
-      document.querySelector(`#tab-${tab}`).classList.remove("hidden");
-    }
-
-
-   
-
-    
-// ======== Writeoff Table Builder ========
-    function buildWriteoffTable() {
+    // ========== WRITE-OFF TABLE BUILDER ==========
+    function buildWriteoffTable(data) {
       const container = document.getElementById("writeoff-container");
-      writeoffData.forEach((record, index) => {
-        const section = document.createElement("div");
-        section.className = "bg-white shadow rounded p-4";
+      container.innerHTML = "";
 
-        // Top-level writeoff summary
-        section.innerHTML = `
-          <div class="flex justify-between items-center">
-            <div>
-              <div class="font-semibold text-lg text-orange-700">${record.customer_name}</div>
-              <div class="text-sm text-gray-600">${record.customer_id} • Writeoff ID: ${record.writeoff_id}</div>
-              <div class="text-sm text-gray-600">Writeoff Date: ${record.writeoff_date}</div>
-              <div class="text-sm text-gray-600">Comment: ${record.reference_id}</div>
-            </div>
-            <div class="text-right">
-              <div class="text-sm text-gray-500">Total Writeoff:</div>
-              <div class="text-xl font-bold text-red-600">$${record.writeoff_amount}</div>
-              <button class="text-sm text-blue-600 mt-2" onclick="toggleDetails(${index})">Toggle Invoices</button>
-            </div>
+      data.forEach((writeoff) => {
+        const section = document.createElement("div");
+        section.className = "bg-white rounded shadow p-4 space-y-2 border";
+
+        const summary = document.createElement("div");
+        summary.className = "flex justify-between items-center font-medium";
+        summary.innerHTML = `
+          <div>
+            <div class="text-lg text-orange-700 font-bold">${writeoff.writeoffId}</div>
+            <div class="text-sm text-gray-600">${writeoff.reason} • ${writeoff.date}</div>
           </div>
-          <div id="details-${index}" class="hidden mt-4 border-t pt-4">
-            ${record.invoices.map(inv => `
-              <div class="mb-4">
-                <div class="font-semibold">Invoice #${inv.invoice_id} - $${inv.invoice_writeoff_amount} on ${inv.invoice_date}</div>
-                <div class="ml-4 text-sm">
-                  ${inv.items.map(it => `<div>• ${it.description} (${it.item_count})</div>`).join("")}
-                  <div class="mt-1">
-                    <a href="https://cbs.clarityvoice.com/billing/viewinv.php?id=${inv.invoice_id}" target="_blank" class="text-blue-500 underline">View Invoice</a>
-                  </div>
-                </div>
-              </div>
-            `).join("")}
+          <div class="text-right">
+            <div class="text-sm text-gray-600">Total</div>
+            <div class="text-xl font-bold text-blue-800">$${writeoff.total.toFixed(2)}</div>
           </div>
         `;
+        section.appendChild(summary);
 
+        const invoiceTable = document.createElement("table");
+        invoiceTable.className = "w-full text-sm border-t mt-2";
+
+        let tableHTML = `
+          <thead>
+            <tr class="bg-gray-100 text-left">
+              <th class="p-2">Invoice ID</th>
+              <th class="p-2">Customer</th>
+              <th class="p-2">Charge Description</th>
+              <th class="p-2 text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+        `;
+
+        writeoff.invoices.forEach((inv) => {
+          inv.items.forEach((item, idx) => {
+            tableHTML += `
+              <tr class="border-t">
+                <td class="p-2">${idx === 0 ? inv.invoiceId : ""}</td>
+                <td class="p-2">${idx === 0 ? inv.customer : ""}</td>
+                <td class="p-2">${item.description}</td>
+                <td class="p-2 text-right">$${item.amount.toFixed(2)}</td>
+              </tr>
+            `;
+          });
+        });
+
+        tableHTML += "</tbody></table>";
+        invoiceTable.innerHTML = tableHTML;
+        section.appendChild(invoiceTable);
         container.appendChild(section);
       });
     }
 
- // ======== Expand/Collapse Logic ========
-    function toggleDetails(index) {
-      const el = document.getElementById(`details-${index}`);
-      el.classList.toggle("hidden");
+    // ========== CSV EXPORT ==========
+    function exportCSV() {
+      let csv = "Writeoff ID,Date,Reason,Invoice ID,Customer,Description,Amount\n";
+
+      writeoffData.forEach(w => {
+        w.invoices.forEach(inv => {
+          inv.items.forEach(item => {
+            csv += `${w.writeoffId},${w.date},${w.reason},${inv.invoiceId},${inv.customer},${item.description},${item.amount.toFixed(2)}\n`;
+          });
+        });
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "writeoff_data.csv";
+      a.click();
+      URL.revokeObjectURL(url);
     }
 
-// ======== CSV Export Logic ========
-    document.addEventListener("DOMContentLoaded", buildWriteoffTable);
-function exportCSV() {
-  let csv = "CBS Account Name,Account Number,Writeoff ID,Writeoff Comment,Writeoff Date,Total Writeoff Amount\\n";
-  writeoffData.forEach(w => {
-    csv += `"${w.customer_name}","${w.customer_id}","${w.writeoff_id}","${w.reference_id}","${w.writeoff_date}","${w.writeoff_amount}"\\n`;
-  });
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "writeoffs_export.csv";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
+    // ========== LOAD + VALIDATE DATE RANGE ==========
+    function loadWriteoffData() {
+      const startInput = document.getElementById("startDate").value;
+      const endInput = document.getElementById("endDate").value;
+      const warning = document.getElementById("dateWarning");
 
-// ======== Writeoff POST Request Logic========
-function loadWriteoffData() {
-  const start = new Date(document.getElementById("startDate").value);
-  const end = new Date(document.getElementById("endDate").value);
-  const warning = document.getElementById("dateWarning");
+      if (!startInput || !endInput) {
+        alert("Please select both a start and end date.");
+        return;
+      }
 
-  if (isNaN(start) || isNaN(end)) {
-    alert("Please select both start and end dates.");
-    return;
-  }
+      const startDate = new Date(startInput);
+      const endDate = new Date(endInput);
 
-  const diffInDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
+      if (startDate > endDate) {
+        alert("Start date must be before end date.");
+        return;
+      }
 
-  if (diffInDays > 183) {
-    warning.classList.remove("hidden");
-  } else {
-    warning.classList.add("hidden");
-  }
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayDiff = Math.round((endDate - startDate) / oneDay);
 
-  if (diffInDays > 365) {
-    alert("Date range cannot exceed 365 days.");
-    return;
-  }
+      if (dayDiff > 365) {
+        alert("Maximum date range is 365 days.");
+        return;
+      }
 
-  console.log("Eventually sending request to n8n with:", {
-    startDate: start.toISOString(),
-    endDate: end.toISOString()
-  });
+      if (dayDiff > 183) {
+        warning.classList.remove("hidden");
+      } else {
+        warning.classList.add("hidden");
+      }
 
-  // Later this becomes: fetch("/your-n8n-endpoint", { method: "POST", body: ... })
-}
+      // 🔧 TODO: Replace with real n8n POST call
+      console.log("🚀 Load writeoff data for:", { startDate: startInput, endDate: endInput });
 
-    
-    
+      buildWriteoffTable(writeoffData);
+    }
   </script>
 </body>
 </html>
-
 
