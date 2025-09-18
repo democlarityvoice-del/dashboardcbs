@@ -1,4 +1,4 @@
-// Fake sample data
+// --- Fake Writeoffs Data ---
 const fakeWriteoffs = [
   {
     client: "Demo Client A",
@@ -23,51 +23,63 @@ const fakeWriteoffs = [
   }
 ];
 
+// --- Render Writeoffs ---
 function loadWriteoffData() {
   const container = document.getElementById("writeoffContainer");
   container.innerHTML = "";
 
   fakeWriteoffs.forEach(writeoff => {
     const totalAmount = writeoff.invoices.reduce((sum, inv) => sum + inv.amount, 0);
+
+    // Create main card wrapper
     const card = document.createElement("div");
     card.className = "writeoff-card";
 
-    const invoiceHTML = writeoff.invoices.map(inv => `
-      <div><strong>${inv.id}</strong> - ${inv.date} - ${inv.description} - $${inv.amount.toFixed(2)}</div>
-    `).join("");
-
-    const toggle = document.createElement("span");
-    toggle.className = "toggle-invoices";
-    toggle.textContent = "Toggle Invoices";
-
-    const invoiceDiv = document.createElement("div");
-    invoiceDiv.className = "invoice-details";
-    invoiceDiv.innerHTML = invoiceHTML;
-
-    toggle.addEventListener("click", () => {
-      invoiceDiv.style.display = invoiceDiv.style.display === "none" ? "block" : "none";
-    });
-
+    // Build header section
     card.innerHTML = `
       <div class="client-name">${writeoff.client}</div>
       <div>${writeoff.number} • Writeoff ID: ${writeoff.id}</div>
       <div>Writeoff Date: ${writeoff.date}</div>
       <div>Comment: ${writeoff.comment}</div>
       <div class="total-writeoff">$${totalAmount.toFixed(2)}</div>
+      <span class="toggle-invoices">Toggle Invoices</span>
     `;
 
-    card.appendChild(toggle);
+    // Build invoices dropdown
+    const invoiceDiv = document.createElement("div");
+    invoiceDiv.className = "invoice-details";
+    invoiceDiv.style.display = "none"; // start collapsed
+
+    const invoiceHTML = writeoff.invoices.map(inv => `
+      <div class="invoice-item">
+        <strong class="id-number">${inv.id}</strong>
+        <span class="date-display">${inv.date}</span>
+        <span class="description">${inv.description}</span>
+        <span class="currency">$${inv.amount.toFixed(2)}</span>
+      </div>
+    `).join("");
+
+    invoiceDiv.innerHTML = invoiceHTML;
+
+    // Toggle logic
+    const toggle = card.querySelector(".toggle-invoices");
+    toggle.addEventListener("click", () => {
+      invoiceDiv.style.display = invoiceDiv.style.display === "none" ? "block" : "none";
+    });
+
     card.appendChild(invoiceDiv);
     container.appendChild(card);
   });
 }
 
+// --- CSV Export ---
 function exportCSV() {
   let csv = "Client,Writeoff ID,Number,Date,Comment,Amount\n";
   fakeWriteoffs.forEach(w => {
     const totalAmount = w.invoices.reduce((sum, inv) => sum + inv.amount, 0);
     csv += `${w.client},${w.id},${w.number},${w.date},${w.comment},${totalAmount.toFixed(2)}\n`;
   });
+
   const blob = new Blob([csv], { type: 'text/csv' });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
@@ -75,6 +87,5 @@ function exportCSV() {
   link.click();
 }
 
-// Load on page load
+// Load data on page load
 window.onload = loadWriteoffData;
-
