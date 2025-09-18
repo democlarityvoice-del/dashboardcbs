@@ -1,4 +1,4 @@
-
+<!-- BEGIN DASHBOARD BUILD -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +9,7 @@
 </head>
 <body class="bg-gray-100 text-gray-900 font-sans">
   <div class="flex h-screen">
-    <!-- Sidebar -->
+    <!-- Sidebar Menu-->
     <aside class="w-64 bg-white shadow-lg p-4 space-y-4">
       <h1 class="text-xl font-bold text-orange-600">Clarity Dashboard</h1>
       <nav class="flex flex-col space-y-2">
@@ -19,10 +19,16 @@
       </nav>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main Content Writeoff Section-->
     <main class="flex-1 overflow-y-auto p-6">
       <div id="tab-writeoffs">
-        <h2 class="text-2xl font-bold mb-4">Writeoffs</h2>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold">Writeoffs</h2>
+          <button onclick="exportCSV()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded shadow">
+            Export CSV
+          </button>
+        </div>
+
         <div id="writeoff-container" class="space-y-4"></div>
       </div>
 
@@ -39,9 +45,9 @@
   </div>
 
   <script>
+
+// ========== Mock Writeoff Data ==========
     const writeoffData = [
-      {
-        const writeoffData = [
   {
     customer_name: "Demo Client A",
     customer_id: "000123",
@@ -63,12 +69,14 @@
   }
 ];
 
+// ======== Tab Switching ========
 
     function switchTab(tab) {
       document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add("hidden"));
       document.querySelector(`#tab-${tab}`).classList.remove("hidden");
     }
 
+// ======== Writeoff Table Builder ========
     function buildWriteoffTable() {
       const container = document.getElementById("writeoff-container");
       writeoffData.forEach((record, index) => {
@@ -109,12 +117,31 @@
       });
     }
 
+ // ======== Expand/Collapse Logic ========
     function toggleDetails(index) {
       const el = document.getElementById(`details-${index}`);
       el.classList.toggle("hidden");
     }
 
+// ======== CSV Export Logic ========
     document.addEventListener("DOMContentLoaded", buildWriteoffTable);
+function exportCSV() {
+  let csv = "CBS Account Name,Account Number,Writeoff ID,Writeoff Comment,Writeoff Date,Total Writeoff Amount\\n";
+  writeoffData.forEach(w => {
+    csv += `"${w.customer_name}","${w.customer_id}","${w.writeoff_id}","${w.reference_id}","${w.writeoff_date}","${w.writeoff_amount}"\\n`;
+  });
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "writeoffs_export.csv";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+   
   </script>
 </body>
 </html>
+
+
