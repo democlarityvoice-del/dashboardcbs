@@ -9,6 +9,7 @@
 </head>
 <body class="bg-gray-100 text-gray-900 font-sans">
   <div class="flex h-screen">
+
     <!-- Sidebar Menu-->
     <aside class="w-64 bg-white shadow-lg p-4 space-y-4">
       <h1 class="text-xl font-bold text-orange-600">Clarity Dashboard</h1>
@@ -18,6 +19,24 @@
         <button onclick="switchTab('comparison')" class="text-left px-2 py-1 rounded hover:bg-orange-100" id="btn-comparison">Merged Analysis</button>
       </nav>
     </aside>
+
+   <!-- Date Range Selector -->
+<div class="mb-6 space-y-2">
+  <div class="flex items-center space-x-4">
+    <label class="text-sm">Start Date:</label>
+    <input type="date" id="startDate" class="border rounded px-2 py-1" />
+    <label class="text-sm">End Date:</label>
+    <input type="date" id="endDate" class="border rounded px-2 py-1" />
+    <button onclick="loadWriteoffData()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+      Load Writeoff Data
+    </button>
+  </div>
+  <div id="dateWarning" class="text-red-600 text-sm hidden">
+    ⚠️ Up to 12 months of data <span class="italic">may</span> be exported. It is safest to keep data pulls under 6 months when possible.
+  </div>
+</div>
+
+
 
     <!-- Main Content Writeoff Section-->
     <main class="flex-1 overflow-y-auto p-6">
@@ -76,6 +95,10 @@
       document.querySelector(`#tab-${tab}`).classList.remove("hidden");
     }
 
+
+   
+
+    
 // ======== Writeoff Table Builder ========
     function buildWriteoffTable() {
       const container = document.getElementById("writeoff-container");
@@ -139,7 +162,41 @@ function exportCSV() {
   link.click();
   document.body.removeChild(link);
 }
-   
+
+// ======== Writeoff POST Request Logic========
+function loadWriteoffData() {
+  const start = new Date(document.getElementById("startDate").value);
+  const end = new Date(document.getElementById("endDate").value);
+  const warning = document.getElementById("dateWarning");
+
+  if (isNaN(start) || isNaN(end)) {
+    alert("Please select both start and end dates.");
+    return;
+  }
+
+  const diffInDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
+
+  if (diffInDays > 183) {
+    warning.classList.remove("hidden");
+  } else {
+    warning.classList.add("hidden");
+  }
+
+  if (diffInDays > 365) {
+    alert("Date range cannot exceed 365 days.");
+    return;
+  }
+
+  console.log("Eventually sending request to n8n with:", {
+    startDate: start.toISOString(),
+    endDate: end.toISOString()
+  });
+
+  // Later this becomes: fetch("/your-n8n-endpoint", { method: "POST", body: ... })
+}
+
+    
+    
   </script>
 </body>
 </html>
