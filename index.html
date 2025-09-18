@@ -77,6 +77,9 @@
       border-top: 1px dashed #ccc;
       padding-top: 10px;
     }
+    .invoice-details div {
+      margin-bottom: 4px;
+    }
     .toggle-invoices {
       display: block;
       margin-top: 8px;
@@ -138,7 +141,6 @@
         number: "000123",
         date: "2025-09-01",
         comment: "Adjustment - Services",
-        amount: 99.99,
         invoices: [
           { id: "INV-001", date: "2025-08-15", description: "VoIP Adjust", amount: 59.99 },
           { id: "INV-002", date: "2025-08-20", description: "Support Credit", amount: 40.00 }
@@ -150,7 +152,6 @@
         number: "000124",
         date: "2025-09-05",
         comment: "Billing Correction",
-        amount: 45.00,
         invoices: [
           { id: "INV-003", date: "2025-08-25", description: "Incorrect Fee", amount: 45.00 }
         ]
@@ -162,26 +163,36 @@
       container.innerHTML = "";
 
       fakeWriteoffs.forEach(writeoff => {
+        const totalAmount = writeoff.invoices.reduce((sum, inv) => sum + inv.amount, 0);
         const card = document.createElement("div");
         card.className = "writeoff-card";
 
-        const total = `<div class="total-writeoff">$${writeoff.amount.toFixed(2)}</div>`;
-        const toggle = `<span class="toggle-invoices" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">Toggle Invoices</span>`;
-
-        const invoicesHTML = writeoff.invoices.map(inv => `
+        const invoiceHTML = writeoff.invoices.map(inv => `
           <div><strong>${inv.id}</strong> - ${inv.date} - ${inv.description} - $${inv.amount.toFixed(2)}</div>
         `).join("");
+
+        const toggle = document.createElement("span");
+        toggle.className = "toggle-invoices";
+        toggle.textContent = "Toggle Invoices";
+
+        const invoiceDiv = document.createElement("div");
+        invoiceDiv.className = "invoice-details";
+        invoiceDiv.innerHTML = invoiceHTML;
+
+        toggle.addEventListener("click", () => {
+          invoiceDiv.style.display = invoiceDiv.style.display === "none" ? "block" : "none";
+        });
 
         card.innerHTML = `
           <div class="client-name">${writeoff.client}</div>
           <div>${writeoff.number} • Writeoff ID: ${writeoff.id}</div>
           <div>Writeoff Date: ${writeoff.date}</div>
           <div>Comment: ${writeoff.comment}</div>
-          ${total}
-          ${toggle}
-          <div class="invoice-details">${invoicesHTML}</div>
+          <div class="total-writeoff">$${totalAmount.toFixed(2)}</div>
         `;
 
+        card.appendChild(toggle);
+        card.appendChild(invoiceDiv);
         container.appendChild(card);
       });
     }
@@ -189,7 +200,8 @@
     function exportCSV() {
       let csv = "Client,Writeoff ID,Number,Date,Comment,Amount\n";
       fakeWriteoffs.forEach(w => {
-        csv += `${w.client},${w.id},${w.number},${w.date},${w.comment},${w.amount}\n`;
+        const totalAmount = w.invoices.reduce((sum, inv) => sum + inv.amount, 0);
+        csv += `${w.client},${w.id},${w.number},${w.date},${w.comment},${totalAmount.toFixed(2)}\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const link = document.createElement("a");
@@ -197,6 +209,9 @@
       link.download = "writeoffs.csv";
       link.click();
     }
+
+    // Load on page load
+    window.onload = loadWriteoffData;
   </script>
 </body>
 </html>
