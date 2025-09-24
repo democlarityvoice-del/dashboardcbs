@@ -1,6 +1,4 @@
 // --- Fake Writeoffs Data ---
-alert("cbs.js has loaded successfully!");
-
 const fakeWriteoffs = [
   {
     client: "Demo Client A",
@@ -33,40 +31,48 @@ function loadWriteoffData() {
   fakeWriteoffs.forEach(writeoff => {
     const totalAmount = writeoff.invoices.reduce((sum, inv) => sum + inv.amount, 0);
 
-    // Create main card wrapper
+    // Create the main card with Tailwind styling
     const card = document.createElement("div");
-    card.className = "writeoff-card";
+    card.className = "bg-white border rounded-lg shadow p-4";
 
-    // Build header section
+    // Card content
     card.innerHTML = `
-      <div class="client-name">${writeoff.client}</div>
-      <div>${writeoff.number} • Writeoff ID: ${writeoff.id}</div>
-      <div>Writeoff Date: ${writeoff.date}</div>
-      <div>Comment: ${writeoff.comment}</div>
-      <div class="total-writeoff">$${totalAmount.toFixed(2)}</div>
-      <span class="toggle-invoices">Toggle Invoices</span>
+      <div class="flex justify-between items-center">
+        <h2 class="text-lg font-semibold">${writeoff.client}</h2>
+        <span class="text-gray-500">${writeoff.number} • ID: ${writeoff.id}</span>
+      </div>
+      <div class="text-sm text-gray-600 mt-2">
+        <div>Writeoff Date: ${writeoff.date}</div>
+        <div>Comment: ${writeoff.comment}</div>
+      </div>
+      <div class="text-lg font-bold text-right text-clarity-orange mt-2">
+        $${totalAmount.toFixed(2)}
+      </div>
+      <button class="mt-3 text-clarity-orange font-semibold hover:underline toggle-invoices">
+        Toggle Invoices
+      </button>
     `;
 
-    // Build invoices dropdown
+    // Invoice details (hidden by default)
     const invoiceDiv = document.createElement("div");
-    invoiceDiv.className = "invoice-details";
-    invoiceDiv.style.display = "none"; // start collapsed
+    invoiceDiv.className = "mt-3 hidden border-t pt-3 space-y-2";
 
-    const invoiceHTML = writeoff.invoices.map(inv => `
-      <div class="invoice-item">
-        <strong class="id-number">${inv.id}</strong>
-        <span class="date-display">${inv.date}</span>
-        <span class="description">${inv.description}</span>
-        <span class="currency">$${inv.amount.toFixed(2)}</span>
-      </div>
-    `).join("");
-
-    invoiceDiv.innerHTML = invoiceHTML;
+    writeoff.invoices.forEach(inv => {
+      const row = document.createElement("div");
+      row.className = "flex justify-between text-sm";
+      row.innerHTML = `
+        <span class="font-mono font-semibold">${inv.id}</span>
+        <span>${inv.date}</span>
+        <span>${inv.description}</span>
+        <span class="font-mono">$${inv.amount.toFixed(2)}</span>
+      `;
+      invoiceDiv.appendChild(row);
+    });
 
     // Toggle logic
-    const toggle = card.querySelector(".toggle-invoices");
-    toggle.addEventListener("click", () => {
-      invoiceDiv.style.display = invoiceDiv.style.display === "none" ? "block" : "none";
+    const toggleBtn = card.querySelector(".toggle-invoices");
+    toggleBtn.addEventListener("click", () => {
+      invoiceDiv.classList.toggle("hidden");
     });
 
     card.appendChild(invoiceDiv);
@@ -74,20 +80,6 @@ function loadWriteoffData() {
   });
 }
 
-// --- CSV Export ---
-function exportCSV() {
-  let csv = "Client,Writeoff ID,Number,Date,Comment,Amount\n";
-  fakeWriteoffs.forEach(w => {
-    const totalAmount = w.invoices.reduce((sum, inv) => sum + inv.amount, 0);
-    csv += `${w.client},${w.id},${w.number},${w.date},${w.comment},${totalAmount.toFixed(2)}\n`;
-  });
-
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "writeoffs.csv";
-  link.click();
-}
-
 // Load data on page load
 window.onload = loadWriteoffData;
+
