@@ -1,6 +1,7 @@
 // --- Fake Writeoffs Data ---
 const fakeWriteoffs = [
   {
+    clientId: "125864",
     client: "Demo Client A",
     id: "WO-10001",
     number: "000123",
@@ -12,6 +13,7 @@ const fakeWriteoffs = [
     ]
   },
   {
+    clientId: "123937",
     client: "Demo Client B",
     id: "WO-10002",
     number: "000124",
@@ -23,63 +25,95 @@ const fakeWriteoffs = [
   }
 ];
 
-// --- Render Writeoffs ---
-function loadWriteoffData() {
-  const container = document.getElementById("writeoffContainer");
-  container.innerHTML = "";
+const tableBody = document.getElementById("writeoffTableBody");
+
+// --- Load Writeoffs into Table ---
+function loadWriteoffs() {
+  tableBody.innerHTML = "";
 
   fakeWriteoffs.forEach(writeoff => {
     const totalAmount = writeoff.invoices.reduce((sum, inv) => sum + inv.amount, 0);
 
-    // Create the main card with Tailwind styling
-    const card = document.createElement("div");
-    card.className = "bg-white border rounded-lg shadow p-4";
+    // Main summary row
+    const mainRow = document.createElement("tr");
+    mainRow.classList.add("border-b", "writeoff-row");
+    mainRow.setAttribute("data-id", writeoff.id);
 
-    // Card content
-    card.innerHTML = `
-      <div class="flex justify-between items-center">
-        <h2 class="text-lg font-semibold">${writeoff.client}</h2>
-        <span class="text-gray-500">${writeoff.number} • ID: ${writeoff.id}</span>
-      </div>
-      <div class="text-sm text-gray-600 mt-2">
-        <div>Writeoff Date: ${writeoff.date}</div>
-        <div>Comment: ${writeoff.comment}</div>
-      </div>
-      <div class="text-lg font-bold text-right text-clarity-orange mt-2">
-        $${totalAmount.toFixed(2)}
-      </div>
-      <button class="mt-3 text-clarity-orange font-semibold hover:underline toggle-invoices">
-        Toggle Invoices
-      </button>
+    mainRow.innerHTML = `
+      <td class="p-3">${writeoff.clientId}</td>
+      <td class="p-3">${writeoff.client}</td>
+      <td class="p-3">${writeoff.id}</td>
+      <td class="p-3 date-cell">${writeoff.date}</td>
+      <td class="p-3 font-semibold text-right">$${totalAmount.toFixed(2)}</td>
+      <td class="p-3">${writeoff.invoices.length} invoice${writeoff.invoices.length > 1 ? "s" : ""}</td>
+      <td class="p-3 text-center">
+        <button class="expand-btn text-blue-600 font-bold">></button>
+      </td>
     `;
 
-    // Invoice details (hidden by default)
-    const invoiceDiv = document.createElement("div");
-    invoiceDiv.className = "mt-3 hidden border-t pt-3 space-y-2";
-
-    writeoff.invoices.forEach(inv => {
-      const row = document.createElement("div");
-      row.className = "flex justify-between text-sm";
-      row.innerHTML = `
-        <span class="font-mono font-semibold">${inv.id}</span>
-        <span>${inv.date}</span>
-        <span>${inv.description}</span>
-        <span class="font-mono">$${inv.amount.toFixed(2)}</span>
-      `;
-      invoiceDiv.appendChild(row);
+    // Event listener for expansion
+    mainRow.querySelector(".expand-btn").addEventListener("click", () => {
+      toggleInvoices(writeoff);
     });
 
-    // Toggle logic
-    const toggleBtn = card.querySelector(".toggle-invoices");
-    toggleBtn.addEventListener("click", () => {
-      invoiceDiv.classList.toggle("hidden");
-    });
-
-    card.appendChild(invoiceDiv);
-    container.appendChild(card);
+    tableBody.appendChild(mainRow);
   });
 }
 
-// Load data on page load
-window.onload = loadWriteoffData;
+// --- Toggle Invoice Rows ---
+function toggleInvoices(writeoff) {
+  const existing = document.querySelector(`.invoice-row[data-parent="${writeoff.id}"]`);
+
+  if (existing) {
+    // Collapse: remove invoice rows
+    existing.remove();
+  } else {
+    // Expand: create a NEW invoice row
+    const invoiceRow = document.createElement("tr");
+    invoiceRow.classList.add("invoice-row", "bg-gray-50");
+    invoiceRow.setAttribute("data-parent", writeoff.id);
+
+    // Build nested table for invoices
+    let invoiceHTML = `
+      <td colspan="7" class="p-3">
+        <table class="w-full text-sm border border-gray-200 rounded">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="p-2 text-left">Invoice ID</th>
+              <th class="p-2 text-left">Date</th>
+              <th class="p-2 text-left">Description</th>
+              <th class="p-2 text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    writeoff.invoices.forEach(inv => {
+      invoiceHTML += `
+        <tr class="border-t">
+          <td class="p-2 font-mono">${inv.id}</td>
+          <td class="p-2">${inv.date}</td>
+          <td class="p-2">${inv.description}</td>
+          <td class="p-2 text-right">$${inv.amount.toFixed(2)}</td>
+        </tr>
+      `;
+    });
+
+    invoiceHTML += `
+          </tbody>
+        </table>
+      </td>
+    `;
+
+    invoiceRow.innerHTML = invoiceHTML;
+
+    // Insert right below its parent write-off
+    const parentRow = document.querySelector(`.writeoff-row[data-id="${writeoff.id}"]`);
+    parentRow.insertAdjacentElement("afterend", invoiceRow);
+  }
+}
+
+// Initialize on page load
+window.onload = loadWriteoffs;
+
 
