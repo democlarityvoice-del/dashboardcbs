@@ -873,3 +873,11 @@
   white-space: nowrap;
   border-width: 0;
 }
+
+.writeoff-card {
+  border: 3px solid green;
+  background: lightblue;
+  padding: 20px;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
