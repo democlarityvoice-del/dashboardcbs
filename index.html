@@ -5,12 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Write-Off Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --clarity-orange: #ef8607; /* Correct Clarity orange */
+    }
+    .bg-clarity-orange {
+      background-color: var(--clarity-orange);
+    }
+    .hover\:bg-clarity-orange-dark:hover {
+      background-color: #d67605; /* Slightly darker hover color */
+    }
+    .text-clarity-orange {
+      color: var(--clarity-orange);
+    }
+    .border-clarity-orange {
+      border-color: var(--clarity-orange);
+    }
+  </style>
 </head>
 <body class="bg-gray-100 font-sans">
   <div class="flex">
     <!-- SIDEBAR -->
     <aside class="w-64 bg-gray-900 text-white min-h-screen">
-      <div class="p-4 text-lg font-bold bg-orange-600">Clarity Dashboard</div>
+      <div class="p-4 text-lg font-bold bg-clarity-orange">Clarity Dashboard</div>
       <nav class="mt-4">
         <a href="#" class="block py-2 px-4 hover:bg-gray-700">Overview</a>
         <a href="#" class="block py-2 px-4 bg-gray-700">Write-Offs</a>
@@ -34,7 +51,8 @@
           <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
           <input type="date" id="endDate" class="mt-1 block w-48 border border-gray-300 rounded-md shadow-sm p-2">
         </div>
-        <button id="loadBtn" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md">
+        <button id="loadBtn"
+          class="bg-clarity-orange hover:bg-clarity-orange-dark text-white px-4 py-2 rounded-md">
           Load Write-Offs
         </button>
       </div>
@@ -115,7 +133,7 @@
           <td class="py-2 px-4">${writeoff.date}</td>
           <td class="py-2 px-4 text-right">$${writeoff.total.toFixed(2)}</td>
           <td class="py-2 px-4 text-center">
-            <button class="toggle-btn text-blue-600 underline" data-id="${writeoff.id}">View</button>
+            <button class="toggle-btn text-clarity-orange underline" data-id="${writeoff.id}">View</button>
           </td>
         `;
         tableBody.appendChild(row);
