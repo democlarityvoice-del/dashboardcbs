@@ -2,53 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Write-Off Dashboard</title>
 
-  <!-- Tailwind CDN for utilities -->
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Inter font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
-
-  <!-- Custom dashboard overrides -->
-  <link rel="stylesheet" href="dashboard.css">
 </head>
-<body class="bg-gray-50 text-gray-800 font-[Inter]">
+<body class="bg-gray-50 font-sans">
 
   <div class="flex min-h-screen">
-    <!-- SIDEBAR -->
+    <!-- Sidebar -->
     <aside class="w-64 bg-gray-900 text-white flex flex-col">
-      <!-- Logo / Title -->
-      <div class="bg-[#e57027] p-4 font-bold text-lg">
-        Clarity Dashboard
-      </div>
-
-      <!-- Navigation Links -->
+      <div class="p-4 bg-orange-600 text-lg font-bold">Clarity Dashboard</div>
       <nav class="flex-1 p-4 space-y-2">
         <a href="#" class="block px-3 py-2 rounded hover:bg-gray-800">Overview</a>
-        <a href="#" class="block px-3 py-2 rounded hover:bg-gray-800 bg-gray-800 font-semibold">Write-Offs</a>
+        <a href="#" class="block px-3 py-2 rounded bg-gray-800">Write-Offs</a>
         <a href="#" class="block px-3 py-2 rounded hover:bg-gray-800">Reports</a>
         <a href="#" class="block px-3 py-2 rounded hover:bg-gray-800">Settings</a>
       </nav>
-
-      <!-- Footer / Logout -->
-      <div class="p-4 text-sm text-gray-400 border-t border-gray-700">
-        © 2025 Clarity
-      </div>
+      <div class="p-4 text-xs text-gray-400">&copy; 2025 Clarity</div>
     </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 p-6 overflow-y-auto">
-      <h1 class="text-2xl font-bold mb-6">Write-Off Dashboard</h1>
-      <div id="writeoffContainer" class="space-y-4"></div>
+    <!-- Main Content -->
+    <main class="flex-1 p-6">
+      <h1 class="text-2xl font-bold mb-4">Write-Off Dashboard</h1>
+
+      <!-- Table -->
+      <div class="bg-white border border-gray-200 rounded-lg shadow">
+        <table class="w-full border-collapse">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="p-3 text-left">Customer ID</th>
+              <th class="p-3 text-left">Customer Name</th>
+              <th class="p-3 text-left">Writeoff ID</th>
+              <th class="p-3 text-left">Date</th>
+              <th class="p-3 text-left">Total Amount</th>
+              <th class="p-3 text-left">Invoices</th>
+              <th class="p-3 text-left"></th>
+            </tr>
+          </thead>
+          <tbody id="writeoffTableBody">
+            <!-- Rows dynamically injected here by JS -->
+          </tbody>
+        </table>
+      </div>
     </main>
   </div>
 
-  <!-- JavaScript -->
   <script src="./cbs.js" defer></script>
 </body>
 </html>
+
 
 
 
