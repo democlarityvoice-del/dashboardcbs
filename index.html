@@ -244,7 +244,7 @@
       tableBody.innerHTML = "";
       let grandTotal = 0;
 
-      writeoffs.forEach(writeoff => {
+      writeoffs.forEach((writeoff, index) => {
         grandTotal += parseFloat(writeoff.writeoff_amount);
 
         // Totals validation
