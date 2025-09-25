@@ -2,63 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Write-Off Dashboard</title>
-
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <style>
-    /* Clarity Portal Orange */
     :root {
       --clarity-orange: #ef8607;
     }
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Smooth expand for invoice rows */
+    .invoice-row {
+      display: none;
+    }
+
+    .invoice-row.open {
+      display: table-row;
+    }
+
+    .sidebar {
+      background-color: #f7f7f7;
+      border-right: 1px solid #e5e7eb;
+      width: 220px;
+      min-height: 100vh;
+    }
+
+    .sidebar h1 {
+      color: var(--clarity-orange);
+    }
+
     .btn-orange {
       background-color: var(--clarity-orange);
       color: white;
-      font-weight: 600;
       padding: 0.5rem 1rem;
       border-radius: 0.375rem;
-      transition: background-color 0.2s;
+      font-weight: 500;
+      transition: background 0.2s ease;
     }
+
     .btn-orange:hover {
-      background-color: #d97306;
+      background-color: #d97504;
     }
-    .hidden { display: none; }
+
+    .link-orange {
+      color: var(--clarity-orange);
+      text-decoration: none;
+    }
+
+    .link-orange:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
-<body class="bg-gray-50 p-6">
+<body class="bg-gray-50 text-gray-900 flex">
 
-  <!-- Header Section -->
-  <div class="flex justify-between items-center mb-4">
-    <h1 class="text-2xl font-bold text-gray-800">Write-Off Dashboard</h1>
-    <div class="space-x-2">
-      <button onclick="exportCSV()" class="btn-orange">Export CSV</button>
+  <!-- SIDEBAR -->
+  <aside class="sidebar p-4">
+    <h1 class="text-2xl font-bold mb-6">Clarity CBS</h1>
+    <nav class="space-y-4">
+      <a href="#" class="block hover:text-[var(--clarity-orange)]">Dashboard</a>
+      <a href="#" class="block hover:text-[var(--clarity-orange)]">Write-Offs</a>
+      <a href="#" class="block hover:text-[var(--clarity-orange)]">Invoices</a>
+      <a href="#" class="block hover:text-[var(--clarity-orange)]">Reports</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-6">
+    <!-- Header Controls -->
+    <div class="flex justify-between items-center mb-6">
+      <div class="flex space-x-4">
+        <label for="start-date" class="text-sm font-medium self-center">Start Date:</label>
+        <input id="start-date" type="date" class="border border-gray-300 rounded px-2 py-1 text-sm">
+
+        <label for="end-date" class="text-sm font-medium self-center">End Date:</label>
+        <input id="end-date" type="date" class="border border-gray-300 rounded px-2 py-1 text-sm">
+
+        <button class="btn-orange" onclick="filterByDate()">Filter</button>
+      </div>
+      <button class="btn-orange" onclick="exportCSV()">Export CSV</button>
     </div>
-  </div>
 
-  <!-- Container for Write-Off Table -->
-  <div class="bg-white shadow rounded-lg p-4">
-    <table class="min-w-full border-collapse">
-      <thead>
-        <tr class="bg-gray-200 text-left">
-          <th class="p-2 border">Customer</th>
-          <th class="p-2 border">Write-Off ID</th>
-          <th class="p-2 border">Reference</th>
-          <th class="p-2 border">Date</th>
-          <th class="p-2 border">Total</th>
-          <th class="p-2 border">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="writeoffContainer"></tbody>
-    </table>
-  </div>
+    <!-- Write-Off Table -->
+    <div class="bg-white shadow rounded-lg overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-4 py-2 text-left font-semibold">Customer</th>
+            <th class="px-4 py-2 text-left font-semibold">Write-Off ID</th>
+            <th class="px-4 py-2 text-left font-semibold">Reference</th>
+            <th class="px-4 py-2 text-left font-semibold">Date</th>
+            <th class="px-4 py-2 text-right font-semibold">Amount</th>
+            <th class="px-4 py-2 text-center font-semibold">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="writeoffTable" class="divide-y divide-gray-200">
+          <!-- Dynamic rows injected by JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
 
   <script>
-    // === SAMPLE DATA (real values internally, masked in UI) ===
     const writeoffs = [
       {
-        customer_name: "Ohana ChemDry",
+        customer_name: "Ok City", // Masked
         customer_id: 123264,
         writeoff_id: 914286,
         reference_id: "WO-KR-CR",
@@ -66,7 +119,7 @@
         writeoff_amount: "72.85",
         invoices: [
           {
-            invoice_id: 1330366,
+            invoice_id: 21330366,
             invoice_writeoff_amount: "33.38",
             invoice_date: "2025-06-01 03:39:48",
             items: [
@@ -77,7 +130,7 @@
             ]
           },
           {
-            invoice_id: 1330665,
+            invoice_id: 21330665,
             invoice_writeoff_amount: "39.47",
             invoice_date: "2025-06-30 20:52:04",
             items: [
@@ -88,7 +141,7 @@
         ]
       },
       {
-        customer_name: "Medi-Weightloss of Carmel",
+        customer_name: "Michigan Wisconsin", // Masked
         customer_id: 125451,
         writeoff_id: 914301,
         reference_id: "9.2.25",
@@ -96,7 +149,7 @@
         writeoff_amount: "1224.30",
         invoices: [
           {
-            invoice_id: 1319479,
+            invoice_id: 21319479,
             invoice_writeoff_amount: "204.09",
             invoice_date: "2025-04-01 01:36:02",
             items: [
@@ -106,111 +159,108 @@
             ]
           },
           {
-            invoice_id: 1323450,
-            invoice_writeoff_amount: "204.09",
-            invoice_date: "2025-05-01 01:23:09",
+            invoice_id: 21341644,
+            invoice_writeoff_amount: "204.01",
+            invoice_date: "2025-09-01 15:01:45",
             items: [
-              { description: "State & Local Taxes", item_count: 1 },
-              { description: "Federal Universal Service", item_count: 1 },
-              { description: "Telephone Number", item_count: 1 }
+              { description: "State and local fees", item_count: 1 },
+              { description: "Federal Recovery Fee (PP)", item_count: 1 },
+              { description: "Essentials", item_count: 1 }
             ]
           }
         ]
       }
     ];
 
-    // === HELPER FUNCTIONS ===
-    function maskCustomerName(name) {
-      if (name === "Ohana ChemDry") return "Ok City";
-      if (name === "Medi-Weightloss of Carmel") return "Michigan Wisconsin";
-      return name;
-    }
-
-    function buildInvoiceLink(invoiceId) {
-      return `https://cbs.clarityvoice.com/billing/viewinv.php?id=${invoiceId}`;
-    }
-
+    // Format currency
     function formatCurrency(value) {
       return `$${parseFloat(value).toFixed(2)}`;
     }
 
-    // === RENDER LOGIC ===
-    function renderWriteoffs() {
-      const container = document.getElementById("writeoffContainer");
-      container.innerHTML = "";
+    // Render table
+    function renderTable() {
+      const tableBody = document.getElementById("writeoffTable");
+      tableBody.innerHTML = "";
 
       writeoffs.forEach((wo, index) => {
-        const maskedName = maskCustomerName(wo.customer_name);
-
-        // Write-Off Row
         const row = document.createElement("tr");
-        row.className = "bg-gray-50 border";
-
         row.innerHTML = `
-          <td class="p-2 border">${maskedName}</td>
-          <td class="p-2 border">${wo.writeoff_id}</td>
-          <td class="p-2 border">${wo.reference_id}</td>
-          <td class="p-2 border">${wo.writeoff_date}</td>
-          <td class="p-2 border font-semibold">${formatCurrency(wo.writeoff_amount)}</td>
-          <td class="p-2 border text-center">
-            <button onclick="toggleInvoices(${index})" class="btn-orange text-sm px-2 py-1">
-              View
-            </button>
+          <td class="px-4 py-2">${wo.customer_name}</td>
+          <td class="px-4 py-2">${wo.writeoff_id}</td>
+          <td class="px-4 py-2">${wo.reference_id}</td>
+          <td class="px-4 py-2">${new Date(wo.writeoff_date).toLocaleDateString()}</td>
+          <td class="px-4 py-2 text-right font-medium">${formatCurrency(wo.writeoff_amount)}</td>
+          <td class="px-4 py-2 text-center">
+            <button class="btn-orange text-xs" onclick="toggleInvoices(${index})">View</button>
           </td>
         `;
-        container.appendChild(row);
+        tableBody.appendChild(row);
 
-        // Invoice Dropdown Row
+        // Hidden invoice details
         const invoiceRow = document.createElement("tr");
-        invoiceRow.id = `invoice-row-${index}`;
-        invoiceRow.className = "hidden bg-white";
+        invoiceRow.className = "invoice-row";
+        invoiceRow.id = `invoiceRow-${index}`;
         invoiceRow.innerHTML = `
-          <td colspan="6" class="p-2 border">
-            <div class="space-y-3">
-              ${wo.invoices.map(inv => `
-                <div class="border rounded p-2">
-                  <div class="flex justify-between">
-                    <span class="font-medium">Invoice #:
-                      <a href="${buildInvoiceLink(inv.invoice_id)}" target="_blank" class="text-blue-600 underline">
+          <td colspan="6" class="px-4 py-2 bg-gray-50">
+            <table class="min-w-full text-sm border">
+              <thead class="bg-gray-100">
+                <tr>
+                  <th class="px-4 py-2 text-left">Invoice ID</th>
+                  <th class="px-4 py-2 text-left">Date</th>
+                  <th class="px-4 py-2 text-left">Description</th>
+                  <th class="px-4 py-2 text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${wo.invoices.map(inv => `
+                  <tr class="border-t">
+                    <td class="px-4 py-2">
+                      <a class="link-orange" href="https://cbs.clarityvoice.com/billing/viewinv.php?id=${inv.invoice_id}" target="_blank">
                         ${inv.invoice_id}
                       </a>
-                    </span>
-                    <span class="text-gray-700">${formatCurrency(inv.invoice_writeoff_amount)}</span>
-                  </div>
-                  <div class="text-sm text-gray-600">Date: ${inv.invoice_date}</div>
-                  <ul class="list-disc pl-5 mt-1">
-                    ${inv.items.map(item => `<li>${item.description} (x${item.item_count})</li>`).join('')}
-                  </ul>
-                </div>
-              `).join('')}
-            </div>
+                    </td>
+                    <td class="px-4 py-2">${new Date(inv.invoice_date).toLocaleDateString()}</td>
+                    <td class="px-4 py-2">
+                      ${inv.items.map(item => `${item.description} (${item.item_count})`).join("<br>")}
+                    </td>
+                    <td class="px-4 py-2 text-right">${formatCurrency(inv.invoice_writeoff_amount)}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
           </td>
         `;
-        container.appendChild(invoiceRow);
+        tableBody.appendChild(invoiceRow);
       });
     }
 
+    // Toggle invoice rows
     function toggleInvoices(index) {
-      const row = document.getElementById(`invoice-row-${index}`);
-      row.classList.toggle("hidden");
+      const invoiceRow = document.getElementById(`invoiceRow-${index}`);
+      invoiceRow.classList.toggle("open");
     }
 
-    // === EXPORT CSV ===
+    // Export CSV
     function exportCSV() {
-      let csv = "Customer,Write-Off ID,Reference,Date,Total\n";
+      let csv = "Customer,Write-Off ID,Reference,Date,Amount\n";
       writeoffs.forEach(wo => {
-        csv += `${maskCustomerName(wo.customer_name)},${wo.writeoff_id},${wo.reference_id},${wo.writeoff_date},${wo.writeoff_amount}\n`;
+        csv += `${wo.customer_name},${wo.writeoff_id},${wo.reference_id},${wo.writeoff_date},${wo.writeoff_amount}\n`;
       });
 
-      const blob = new Blob([csv], { type: "text/csv" });
+      const blob = new Blob([csv], { type: 'text/csv' });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "writeoffs.csv";
       link.click();
     }
 
-    // Render on page load
-    window.onload = renderWriteoffs;
+    // Filter by date (placeholder logic)
+    function filterByDate() {
+      alert("Date filtering will be implemented soon.");
+    }
+
+    // Initialize table on page load
+    window.onload = renderTable;
   </script>
 </body>
 </html>
