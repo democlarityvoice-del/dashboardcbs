@@ -313,16 +313,18 @@
         // Update total
         totalAmountEl.textContent = formatCurrency(grandTotal);
       
-        // Toggle logic
-        document.querySelectorAll(".toggle-btn").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const parentId = btn.getAttribute("data-id");
-            const invoiceRow = document.querySelector(`[data-parent="${parentId}"]`);
-            if (invoiceRow) {
-              invoiceRow.classList.toggle("hidden");
-            }
-          });
+      // Toggle logic
+      document.querySelectorAll(".toggle-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const parentId = btn.getAttribute("data-id");
+          const invoiceRow = document.querySelector(`[data-parent="${parentId}"]`);
+          if (invoiceRow) {
+            invoiceRow.classList.toggle("hidden");
+          }
         });
+      });
+
+
       }
 
     
