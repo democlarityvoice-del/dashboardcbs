@@ -95,7 +95,43 @@
     </main>
   </div>
 
+    <!-- Layout & Sidebar Spacing Fix -->
+    <script>
+      const aside = document.querySelector('aside');
+      if (aside) aside.style.paddingTop = '20px';
+
+      document.querySelectorAll('aside nav a').forEach(link => {
+        link.style.marginBottom = '8px';
+      });
+
+      const footer = document.querySelector('aside .absolute');
+      if (footer) {
+        footer.style.left = '50%';
+        footer.style.transform = 'translateX(-50%)';
+        footer.style.textAlign = 'center';
+      }
+
+      const main = document.querySelector('main');
+      if (main) main.style.marginTop = '20px';
+
+      const filterSection = document.querySelector('.flex.items-end.gap-4');
+      if (filterSection) {
+        filterSection.style.marginBottom = '20px';
+        filterSection.style.gap = '16px';
+        if (!filterSection.dataset.styled) {
+          filterSection.style.backgroundColor = '#f9fafb';
+          filterSection.style.padding = '10px';
+          filterSection.style.borderRadius = '6px';
+          filterSection.style.border = '1px solid #e5e7eb';
+          filterSection.dataset.styled = 'true';
+        }
+      }
+    </script>
+
+
+  
   <script>
+    
     // --- REAL MASKED DATA ---
     const writeoffs = [
       {
