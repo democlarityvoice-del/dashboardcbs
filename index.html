@@ -1,207 +1,217 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Write-Off Dashboard</title>
+
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
+    /* Clarity Portal Orange */
     :root {
-      --clarity-orange: #ef8607; /* Correct Clarity orange */
+      --clarity-orange: #ef8607;
     }
-    .bg-clarity-orange {
+    .btn-orange {
       background-color: var(--clarity-orange);
+      color: white;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.2s;
     }
-    .hover\:bg-clarity-orange-dark:hover {
-      background-color: #d67605; /* Slightly darker hover color */
+    .btn-orange:hover {
+      background-color: #d97306;
     }
-    .text-clarity-orange {
-      color: var(--clarity-orange);
-    }
-    .border-clarity-orange {
-      border-color: var(--clarity-orange);
-    }
+    .hidden { display: none; }
   </style>
 </head>
-<body class="bg-gray-100 font-sans">
-  <div class="flex">
-    <!-- SIDEBAR -->
-    <aside class="w-64 bg-gray-900 text-white min-h-screen">
-      <div class="p-4 text-lg font-bold bg-clarity-orange">Clarity Dashboard</div>
-      <nav class="mt-4">
-        <a href="#" class="block py-2 px-4 hover:bg-gray-700">Overview</a>
-        <a href="#" class="block py-2 px-4 bg-gray-700">Write-Offs</a>
-        <a href="#" class="block py-2 px-4 hover:bg-gray-700">Reports</a>
-        <a href="#" class="block py-2 px-4 hover:bg-gray-700">Settings</a>
-      </nav>
-      <div class="absolute bottom-4 left-4 text-xs text-gray-400">© 2025 Clarity</div>
-    </aside>
+<body class="bg-gray-50 p-6">
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 p-6">
-      <h1 class="text-2xl font-bold mb-6">Write-Off Dashboard</h1>
+  <!-- Header Section -->
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold text-gray-800">Write-Off Dashboard</h1>
+    <div class="space-x-2">
+      <button onclick="exportCSV()" class="btn-orange">Export CSV</button>
+    </div>
+  </div>
 
-      <!-- DATE SELECTOR + LOAD BUTTON -->
-      <div class="flex items-end gap-4 mb-6">
-        <div>
-          <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
-          <input type="date" id="startDate" class="mt-1 block w-48 border border-gray-300 rounded-md shadow-sm p-2">
-        </div>
-        <div>
-          <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
-          <input type="date" id="endDate" class="mt-1 block w-48 border border-gray-300 rounded-md shadow-sm p-2">
-        </div>
-        <button id="loadBtn"
-          class="bg-clarity-orange hover:bg-clarity-orange-dark text-white px-4 py-2 rounded-md">
-          Load Write-Offs
-        </button>
-      </div>
-
-      <!-- TOTAL + EXPORT -->
-      <div class="flex items-center justify-between mb-4">
-        <div class="bg-white border rounded-lg shadow-sm p-4">
-          <p class="text-gray-500 text-sm">TOTAL AMOUNT</p>
-          <p id="totalAmount" class="text-2xl font-bold">$0.00</p>
-        </div>
-        <button id="exportBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
-          Export CSV
-        </button>
-      </div>
-
-      <!-- TABLE -->
-      <div class="overflow-x-auto bg-white shadow rounded-lg">
-        <table class="min-w-full text-sm">
-          <thead class="bg-gray-50 border-b">
-            <tr>
-              <th class="py-2 px-4 text-left">Customer ID</th>
-              <th class="py-2 px-4 text-left">Customer Name</th>
-              <th class="py-2 px-4 text-left">Write-Off ID</th>
-              <th class="py-2 px-4 text-left">Date</th>
-              <th class="py-2 px-4 text-right">Total</th>
-              <th class="py-2 px-4 text-center">Invoices</th>
-            </tr>
-          </thead>
-          <tbody id="writeoffTable"></tbody>
-        </table>
-      </div>
-    </main>
+  <!-- Container for Write-Off Table -->
+  <div class="bg-white shadow rounded-lg p-4">
+    <table class="min-w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-200 text-left">
+          <th class="p-2 border">Customer</th>
+          <th class="p-2 border">Write-Off ID</th>
+          <th class="p-2 border">Reference</th>
+          <th class="p-2 border">Date</th>
+          <th class="p-2 border">Total</th>
+          <th class="p-2 border">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="writeoffContainer"></tbody>
+    </table>
   </div>
 
   <script>
-    // --- Fake Data ---
-    const fakeWriteoffs = [
+    // === SAMPLE DATA (real values internally, masked in UI) ===
+    const writeoffs = [
       {
-        id: "WO-10001",
-        customerId: "125864",
-        customerName: "Demo Client A",
-        date: "2025-09-01",
-        total: 99.99,
+        customer_name: "Ohana ChemDry",
+        customer_id: 123264,
+        writeoff_id: 914286,
+        reference_id: "WO-KR-CR",
+        writeoff_date: "2025-09-01 15:48:28",
+        writeoff_amount: "72.85",
         invoices: [
-          { id: "INV-001", date: "2025-08-15", description: "VoIP Adjust", amount: 59.99 },
-          { id: "INV-002", date: "2025-08-20", description: "Support Credit", amount: 40.00 }
+          {
+            invoice_id: 1330366,
+            invoice_writeoff_amount: "33.38",
+            invoice_date: "2025-06-01 03:39:48",
+            items: [
+              { description: "State & Local Taxes", item_count: 1 },
+              { description: "Yealink W76P DECT Base+Handset DaaS", item_count: 1 },
+              { description: "WatchDog Entry RRT-200 DaaS Discount", item_count: 1 },
+              { description: "DaaS Yealink - T54W - AC", item_count: 1 }
+            ]
+          },
+          {
+            invoice_id: 1330665,
+            invoice_writeoff_amount: "39.47",
+            invoice_date: "2025-06-30 20:52:04",
+            items: [
+              { description: "Return Label phones", item_count: 1 },
+              { description: "State & Local Taxes", item_count: 1 }
+            ]
+          }
         ]
       },
       {
-        id: "WO-10002",
-        customerId: "125937",
-        customerName: "Demo Client B",
-        date: "2025-09-05",
-        total: 45.00,
+        customer_name: "Medi-Weightloss of Carmel",
+        customer_id: 125451,
+        writeoff_id: 914301,
+        reference_id: "9.2.25",
+        writeoff_date: "2025-09-02 16:20:06",
+        writeoff_amount: "1224.30",
         invoices: [
-          { id: "INV-003", date: "2025-08-25", description: "Incorrect Fee", amount: 45.00 }
+          {
+            invoice_id: 1319479,
+            invoice_writeoff_amount: "204.09",
+            invoice_date: "2025-04-01 01:36:02",
+            items: [
+              { description: "Federal Universal Service", item_count: 1 },
+              { description: "Telephone Number", item_count: 1 },
+              { description: "State and local fees", item_count: 1 }
+            ]
+          },
+          {
+            invoice_id: 1323450,
+            invoice_writeoff_amount: "204.09",
+            invoice_date: "2025-05-01 01:23:09",
+            items: [
+              { description: "State & Local Taxes", item_count: 1 },
+              { description: "Federal Universal Service", item_count: 1 },
+              { description: "Telephone Number", item_count: 1 }
+            ]
+          }
         ]
       }
     ];
 
-    const tableBody = document.getElementById("writeoffTable");
-    const totalAmountEl = document.getElementById("totalAmount");
+    // === HELPER FUNCTIONS ===
+    function maskCustomerName(name) {
+      if (name === "Ohana ChemDry") return "Ok City";
+      if (name === "Medi-Weightloss of Carmel") return "Michigan Wisconsin";
+      return name;
+    }
 
-    function renderTable() {
-      tableBody.innerHTML = "";
-      let grandTotal = 0;
+    function buildInvoiceLink(invoiceId) {
+      return `https://cbs.clarityvoice.com/billing/viewinv.php?id=${invoiceId}`;
+    }
 
-      fakeWriteoffs.forEach(writeoff => {
-        grandTotal += writeoff.total;
+    function formatCurrency(value) {
+      return `$${parseFloat(value).toFixed(2)}`;
+    }
 
-        // Main Row
+    // === RENDER LOGIC ===
+    function renderWriteoffs() {
+      const container = document.getElementById("writeoffContainer");
+      container.innerHTML = "";
+
+      writeoffs.forEach((wo, index) => {
+        const maskedName = maskCustomerName(wo.customer_name);
+
+        // Write-Off Row
         const row = document.createElement("tr");
-        row.className = "border-b hover:bg-gray-50";
+        row.className = "bg-gray-50 border";
+
         row.innerHTML = `
-          <td class="py-2 px-4">${writeoff.customerId}</td>
-          <td class="py-2 px-4">${writeoff.customerName}</td>
-          <td class="py-2 px-4">${writeoff.id}</td>
-          <td class="py-2 px-4">${writeoff.date}</td>
-          <td class="py-2 px-4 text-right">$${writeoff.total.toFixed(2)}</td>
-          <td class="py-2 px-4 text-center">
-            <button class="toggle-btn text-clarity-orange underline" data-id="${writeoff.id}">View</button>
+          <td class="p-2 border">${maskedName}</td>
+          <td class="p-2 border">${wo.writeoff_id}</td>
+          <td class="p-2 border">${wo.reference_id}</td>
+          <td class="p-2 border">${wo.writeoff_date}</td>
+          <td class="p-2 border font-semibold">${formatCurrency(wo.writeoff_amount)}</td>
+          <td class="p-2 border text-center">
+            <button onclick="toggleInvoices(${index})" class="btn-orange text-sm px-2 py-1">
+              View
+            </button>
           </td>
         `;
-        tableBody.appendChild(row);
+        container.appendChild(row);
 
-        // Hidden Invoice Row
+        // Invoice Dropdown Row
         const invoiceRow = document.createElement("tr");
-        invoiceRow.className = "hidden bg-gray-50";
-        invoiceRow.setAttribute("data-parent", writeoff.id);
-
-        let invoiceHTML = `
-          <td colspan="6" class="p-4">
-            <table class="w-full text-sm border">
-              <thead>
-                <tr class="bg-gray-100">
-                  <th class="py-2 px-4 text-left">Invoice ID</th>
-                  <th class="py-2 px-4 text-left">Date</th>
-                  <th class="py-2 px-4 text-left">Description</th>
-                  <th class="py-2 px-4 text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
+        invoiceRow.id = `invoice-row-${index}`;
+        invoiceRow.className = "hidden bg-white";
+        invoiceRow.innerHTML = `
+          <td colspan="6" class="p-2 border">
+            <div class="space-y-3">
+              ${wo.invoices.map(inv => `
+                <div class="border rounded p-2">
+                  <div class="flex justify-between">
+                    <span class="font-medium">Invoice #:
+                      <a href="${buildInvoiceLink(inv.invoice_id)}" target="_blank" class="text-blue-600 underline">
+                        ${inv.invoice_id}
+                      </a>
+                    </span>
+                    <span class="text-gray-700">${formatCurrency(inv.invoice_writeoff_amount)}</span>
+                  </div>
+                  <div class="text-sm text-gray-600">Date: ${inv.invoice_date}</div>
+                  <ul class="list-disc pl-5 mt-1">
+                    ${inv.items.map(item => `<li>${item.description} (x${item.item_count})</li>`).join('')}
+                  </ul>
+                </div>
+              `).join('')}
+            </div>
+          </td>
         `;
-
-        writeoff.invoices.forEach(inv => {
-          invoiceHTML += `
-            <tr class="border-t">
-              <td class="py-2 px-4">${inv.id}</td>
-              <td class="py-2 px-4">${inv.date}</td>
-              <td class="py-2 px-4">${inv.description}</td>
-              <td class="py-2 px-4 text-right">$${inv.amount.toFixed(2)}</td>
-            </tr>
-          `;
-        });
-
-        invoiceHTML += "</tbody></table></td>";
-        invoiceRow.innerHTML = invoiceHTML;
-        tableBody.appendChild(invoiceRow);
-      });
-
-      totalAmountEl.textContent = `$${grandTotal.toFixed(2)}`;
-
-      // Toggle logic
-      document.querySelectorAll(".toggle-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const parentId = btn.getAttribute("data-id");
-          const invoiceRow = document.querySelector(`[data-parent="${parentId}"]`);
-          invoiceRow.classList.toggle("hidden");
-        });
+        container.appendChild(invoiceRow);
       });
     }
 
-    // Export CSV
-    document.getElementById("exportBtn").addEventListener("click", () => {
-      let csv = "Customer ID,Customer Name,Write-Off ID,Date,Total\n";
-      fakeWriteoffs.forEach(w => {
-        csv += `${w.customerId},${w.customerName},${w.id},${w.date},${w.total.toFixed(2)}\n`;
+    function toggleInvoices(index) {
+      const row = document.getElementById(`invoice-row-${index}`);
+      row.classList.toggle("hidden");
+    }
+
+    // === EXPORT CSV ===
+    function exportCSV() {
+      let csv = "Customer,Write-Off ID,Reference,Date,Total\n";
+      writeoffs.forEach(wo => {
+        csv += `${maskCustomerName(wo.customer_name)},${wo.writeoff_id},${wo.reference_id},${wo.writeoff_date},${wo.writeoff_amount}\n`;
       });
 
-      const blob = new Blob([csv], { type: 'text/csv' });
+      const blob = new Blob([csv], { type: "text/csv" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "writeoffs.csv";
       link.click();
-    });
+    }
 
-    // Initial render
-    document.getElementById("loadBtn").addEventListener("click", renderTable);
-    renderTable();
+    // Render on page load
+    window.onload = renderWriteoffs;
   </script>
 </body>
 </html>
+
