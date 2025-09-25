@@ -81,7 +81,7 @@
             <th class="py-2 px-4 text-left">Write-Off ID</th>
             <th class="py-2 px-4 text-left">Reference</th>
             <th class="py-2 px-4 text-left">Date</th>
-            <th class="py-2 px-4 text-right">Write-Off Total</th>
+            <th class="py-2 px-4 text-center">Write-Off Total</th>
             <th class="py-2 px-4 text-center">Invoices</th>
           </tr>
         </thead>
@@ -203,8 +203,11 @@
           <td class="py-2 px-4">${writeoff.writeoff_date.split(" ")[0]}</td>
           <td class="py-2 px-4 text-right">${formatCurrency(writeoff.writeoff_amount)}</td>
           <td class="py-2 px-4 text-center">
-            <button class="toggle-btn text-clarity-orange underline" data-id="${writeoff.writeoff_id}">View</button>
+            <button class="toggle-btn text-clarity-orange underline" data-id="${writeoff.writeoff_id}">
+              ${writeoff.invoices.length} ${writeoff.invoices.length === 1 ? 'Invoice' : 'Invoices'}
+            </button>
           </td>
+
         `;
         tableBody.appendChild(row);
 
