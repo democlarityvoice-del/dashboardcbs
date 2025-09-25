@@ -109,7 +109,7 @@
               </td>
             </tr>
           ))}
-        </tbody>
+        <tbody id="writeoffTable"></tbody>
       </table>
     </div>
 
@@ -262,20 +262,20 @@
           ? "bg-white hover:bg-[#F4F5F7] border-b" 
           : "bg-[#FAFAFA] hover:bg-[#F4F5F7] border-b";
         
-        row.innerHTML = `
-          <td class="py-2 px-4">${writeoff.customer_id}</td>
-          <td class="py-2 px-4">${writeoff.customer_name}</td>
-          <td class="py-2 px-4">${writeoff.writeoff_id}</td>
-          <td class="py-2 px-4">${writeoff.reference_id}</td>
-          <td class="py-2 px-4">${writeoff.writeoff_date.split(" ")[0]}</td>
-          <td class="py-2 px-4 text-right">${formatCurrency(writeoff.writeoff_amount)}</td>
-          <td class="py-2 px-4 text-center">
-            <button class="toggle-btn text-[#ef8607] underline" data-id="${writeoff.writeoff_id}">
-              ${writeoff.invoices.length} ${writeoff.invoices.length === 1 ? 'Invoice' : 'Invoices'}
-            </button>
-          </td>
-        `;
-        tableBody.appendChild(row);
+          row.innerHTML = `
+            <td class="py-2 px-4">${writeoff.customer_id}</td>
+            <td class="py-2 px-4">${writeoff.customer_name}</td>
+            <td class="py-2 px-4">${writeoff.writeoff_id}</td>
+            <td class="py-2 px-4">${writeoff.reference_id}</td>
+            <td class="py-2 px-4">${writeoff.writeoff_date.split(" ")[0]}</td>
+            <td class="py-2 px-4 text-right">${formatCurrency(writeoff.writeoff_amount)}</td>
+            <td class="py-2 px-4 text-center">
+              <button class="toggle-btn text-[#ef8607] underline" data-id="${writeoff.writeoff_id}">
+                ${writeoff.invoices.length} ${writeoff.invoices.length === 1 ? 'Invoice' : 'Invoices'}
+              </button>
+            </td>
+          `;
+          tableBody.appendChild(row);
 
     
 
@@ -327,21 +327,30 @@
           </td>
         `;
         
-        invoiceRow.innerHTML = invoiceHTML;
-        tableBody.appendChild(invoiceRow);
+          invoiceHTML += `
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              `;
+          
+              invoiceRow.innerHTML = invoiceHTML;
+              tableBody.appendChild(invoiceRow);
+            }); // <-- close the writeoffs.forEach properly
+          
+            // after loop:
+            totalAmountEl.textContent = formatCurrency(grandTotal);
+          
+            // Toggle logic
+            document.querySelectorAll(".toggle-btn").forEach(btn => {
+              btn.addEventListener("click", () => {
+                const parentId = btn.getAttribute("data-id");
+                const invoiceRow = document.querySelector(\`[data-parent="\${parentId}"]\`);
+                if (invoiceRow) invoiceRow.classList.toggle("hidden");
+              });
+            });
+          }
 
-
-      totalAmountEl.textContent = formatCurrency(grandTotal);
-
-      // Toggle logic
-      document.querySelectorAll(".toggle-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const parentId = btn.getAttribute("data-id");
-          const invoiceRow = document.querySelector(`[data-parent="${parentId}"]`);
-          invoiceRow.classList.toggle("hidden");
-        });
-      });
-    }
 
     // Export CSV
     document.getElementById("exportBtn").addEventListener("click", () => {
