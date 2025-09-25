@@ -77,40 +77,21 @@
 
     <!-- MAIN WRITE-OFF TABLE -->
     <div className="shadow-md rounded-md overflow-hidden mb-8">
-      <table className="table-fixed w-full border-collapse">
-        <thead>
-          <tr className="bg-[#EDEEEF] text-left">
-            <th className="px-4 py-2 w-[15%]">Customer ID</th>
-            <th className="px-4 py-2 w-[20%]">Customer Name</th>
-            <th className="px-4 py-2 w-[15%]">Write-Off ID</th>
-            <th className="px-4 py-2 w-[15%]">Reference</th>
-            <th className="px-4 py-2 w-[15%]">Date</th>
-            <th className="px-4 py-2 w-[10%] text-right">Write-Off Total</th>
-            <th className="px-4 py-2 w-[10%] text-right">Invoices</th>
-          </tr>
-        </thead>
-        <tbody>
-          {writeOffs.map((wo, idx) => (
-            <tr
-              key={wo.writeoff_id}
-              className={idx % 2 === 0 ? 'bg-white hover:bg-[#F4F5F7]' : 'bg-[#FAFAFA] hover:bg-[#F4F5F7]'}
-            >
-              <td className="px-4 py-2">{wo.customer_id}</td>
-              <td className="px-4 py-2">{wo.customer_name}</td>
-              <td className="px-4 py-2">{wo.writeoff_id}</td>
-              <td className="px-4 py-2">{wo.reference_id}</td>
-              <td className="px-4 py-2">{wo.writeoff_date}</td>
-              <td className="px-4 py-2 text-right">${wo.writeoff_amount}</td>
-              <td
-                className="px-4 py-2 text-right text-[#ef8607] cursor-pointer"
-                onClick={() => toggleInvoices(wo.writeoff_id)}
-              >
-                {wo.invoices.length} Invoices
-              </td>
+      <table class="table-fixed w-full border-collapse">
+          <thead>
+            <tr class="bg-[#EDEEEF] text-left">
+              <th class="px-4 py-2 w-[15%]">Customer ID</th>
+              <th class="px-4 py-2 w-[20%]">Customer Name</th>
+              <th class="px-4 py-2 w-[15%]">Write-Off ID</th>
+              <th class="px-4 py-2 w-[15%]">Reference</th>
+              <th class="px-4 py-2 w-[15%]">Date</th>
+              <th class="px-4 py-2 w-[10%] text-right">Write-Off Total</th>
+              <th class="px-4 py-2 w-[10%] text-right">Invoices</th>
             </tr>
-          ))}
-        <tbody id="writeoffTable"></tbody>
-      </table>
+          </thead>
+          <tbody id="writeoffTable"></tbody>
+        </table>
+
     </div>
 
     </main>
@@ -327,16 +308,11 @@
           </td>
         `;
         
-          invoiceHTML += `
-                      </tbody>
-                    </table>
-                  </div>
-                </td>
-              `;
+
           
               invoiceRow.innerHTML = invoiceHTML;
               tableBody.appendChild(invoiceRow);
-            }); // <-- close the writeoffs.forEach properly
+     }); // <-- close the writeoffs.forEach properly
           
             // after loop:
             totalAmountEl.textContent = formatCurrency(grandTotal);
