@@ -267,6 +267,12 @@
     function formatCurrency(amount) {
         return `$${parseFloat(amount).toFixed(2)}`;
       }
+
+        // Dark Mode Toggle
+    document.getElementById("darkModeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+
       
       function renderTable() {
         tableBody.innerHTML = "";
