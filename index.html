@@ -21,7 +21,40 @@
     .border-clarity-orange {
       border-color: var(--clarity-orange);
     }
+    </style>
+  
+    <style>
+    /* DARK MODE */
+    body.dark-mode {
+      background-color: #1f2937;
+      color: #f3f4f6;
+    }
+  
+    body.dark-mode aside {
+      background-color: #111827;
+    }
+  
+    body.dark-mode .bg-white,
+    body.dark-mode #totalAmountCard {
+      background-color: #1f2937 !important;
+      color: #f3f4f6 !important;
+    }
+  
+    body.dark-mode table th {
+      background-color: #374151 !important;
+      color: #f3f4f6 !important;
+    }
+  
+    body.dark-mode table td {
+      background-color: #1f2937 !important;
+      color: #f3f4f6 !important;
+    }
+  
+    body.dark-mode table tr:hover td {
+      background-color: #4b5563 !important;
+    }
   </style>
+
 </head>
 <body class="bg-gray-100 font-sans">
   <div class="flex">
@@ -54,7 +87,7 @@
           <input type="date" id="endDate" class="mt-1 block w-48 border border-gray-300 rounded-md shadow-sm p-2">
         </div>
         <button id="loadBtn"
-          class="bg-[var(--clarity-orange)] hover:bg-[#d67605] text-white px-4 py-2 rounded-md shadow-md transition">
+          class="bg-[#ef8607] hover:bg-[#d67605] text-white px-4 py-2 rounded-md shadow-md transition">
           Load Write-Offs
         </button>
 
@@ -63,17 +96,19 @@
       <!-- TOTAL + EXPORT + DARK MODE TOGGLE -->
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-4">
-          <!-- Export CSV -->
-          <button id="exportBtn" 
-            class="bg-white border border-gray-300 shadow-md hover:bg-gray-50 text-gray-800 px-4 py-2 rounded-md transition">
-            Export CSV
-          </button>
+          
+      <!-- Export CSV -->
+      <button id="exportBtn" 
+        class="bg-[#ef8607] hover:bg-[#d67605] text-white px-4 py-2 rounded-md shadow-md transition">
+        Export CSV
+      </button>
       
-          <!-- Dark Mode Toggle -->
-          <button id="darkModeToggle" 
-            class="bg-gray-800 text-white px-4 py-2 rounded-md shadow-md hover:bg-gray-700 transition">
-            Dark Mode
-          </button>
+      <!-- Dark Mode Toggle -->
+      <button id="darkModeToggle" 
+        class="bg-[#ef8607] hover:bg-[#d67605] text-white px-4 py-2 rounded-md shadow-md transition">
+        Dark Mode
+      </button>
+
         </div>
       
         <!-- Total Write-Offs -->
