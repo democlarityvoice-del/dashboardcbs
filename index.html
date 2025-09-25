@@ -59,16 +59,20 @@
         </button>
       </div>
 
-      <!-- TOTAL + EXPORT -->
-      <div class="flex items-center justify-between mb-4">
-        <div class="bg-white border rounded-lg shadow-sm p-4">
-          <p class="text-gray-500 text-sm">TOTAL AMOUNT</p>
-          <p id="totalAmount" class="text-2xl font-bold">$0.00</p>
-        </div>
-        <button id="exportBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
-          Export CSV
-        </button>
+          <!-- TOTAL + EXPORT -->
+    <div class="flex items-center justify-between mb-4">
+      <!-- Export CSV on the left -->
+      <button id="exportBtn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
+        Export CSV
+      </button>
+    
+      <!-- Total Write-Offs card on the right -->
+      <div class="bg-white border rounded-lg shadow-sm p-4">
+        <p class="text-gray-500 text-sm">Total Write-Offs for Time Period</p>
+        <p id="totalAmount" class="text-2xl font-bold">$0.00</p>
       </div>
+    </div>
+
 
 
     <!-- MAIN WRITE-OFF TABLE -->
