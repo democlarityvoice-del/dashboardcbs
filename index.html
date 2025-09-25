@@ -102,7 +102,7 @@
               <td className="px-4 py-2">{wo.writeoff_date}</td>
               <td className="px-4 py-2 text-right">${wo.writeoff_amount}</td>
               <td
-                className="px-4 py-2 text-right text-[#E57027] cursor-pointer"
+                className="px-4 py-2 text-right text-[#ef8607] cursor-pointer"
                 onClick={() => toggleInvoices(wo.writeoff_id)}
               >
                 {wo.invoices.length} Invoices
@@ -270,7 +270,7 @@
           <td class="py-2 px-4">${writeoff.writeoff_date.split(" ")[0]}</td>
           <td class="py-2 px-4 text-right">${formatCurrency(writeoff.writeoff_amount)}</td>
           <td class="py-2 px-4 text-center">
-            <button class="toggle-btn text-[#E57027] underline" data-id="${writeoff.writeoff_id}">
+            <button class="toggle-btn text-[#ef8607] underline" data-id="${writeoff.writeoff_id}">
               ${writeoff.invoices.length} ${writeoff.invoices.length === 1 ? 'Invoice' : 'Invoices'}
             </button>
           </td>
@@ -311,7 +311,7 @@
           invoiceHTML += `
             <tr class="${rowClass}">
               <td class="py-2 px-4">
-                <a href="${invoiceUrl}" target="_blank" class="text-[#E57027] underline">${inv.invoice_id}</a>
+                <a href="${invoiceUrl}" target="_blank" class="text-[#ef8607] underline">${inv.invoice_id}</a>
               </td>
               <td class="py-2 px-4">${inv.invoice_date.split(" ")[0]}</td>
               <td class="py-2 px-4"><ul>${descriptionList}</ul></td>
