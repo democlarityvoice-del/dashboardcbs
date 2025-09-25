@@ -75,35 +75,44 @@ function toggleInvoices(writeoff) {
 
     // Build nested table for invoices
     let invoiceHTML = `
-      <td colspan="7" class="p-3">
-        <table class="w-full text-sm border border-gray-200 rounded">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="p-2 text-left">Invoice ID</th>
-              <th class="p-2 text-left">Date</th>
-              <th class="p-2 text-left">Description</th>
-              <th class="p-2 text-right">Amount</th>
+      <td colspan="7" class="p-4">
+        <table class="w-full text-sm border">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="py-2 px-4 text-left">Invoice ID</th>
+              <th class="py-2 px-4 text-left">Date</th>
+              <th class="py-2 px-4 text-left w-full">Description</th>
+              <th class="py-2 px-4 text-right">Invoice Amount</th>
             </tr>
           </thead>
           <tbody>
     `;
-
+    
     writeoff.invoices.forEach(inv => {
+      const invoiceLink = `https://cbs.clarityvoice.com/billing/viewinv.php?id=${inv.invoice_id}`;
+    
       invoiceHTML += `
         <tr class="border-t">
-          <td class="p-2 font-mono">${inv.id}</td>
-          <td class="p-2">${inv.date}</td>
-          <td class="p-2">${inv.description}</td>
-          <td class="p-2 text-right">$${inv.amount.toFixed(2)}</td>
+          <td class="py-2 px-4">
+            <a href="${invoiceLink}" target="_blank" class="text-clarity-orange hover:underline">
+              ${inv.invoice_id}
+            </a>
+          </td>
+          <td class="py-2 px-4">${inv.invoice_date}</td>
+          <td class="py-2 px-4">
+            ${inv.items.map(item => `${item.description} (${item.item_count})`).join('<br>')}
+          </td>
+          <td class="py-2 px-4 text-right">$${parseFloat(inv.invoice_writeoff_amount).toFixed(2)}</td>
         </tr>
       `;
     });
-
+    
     invoiceHTML += `
           </tbody>
         </table>
       </td>
     `;
+
 
     invoiceRow.innerHTML = invoiceHTML;
 
