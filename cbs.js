@@ -89,7 +89,7 @@ function toggleInvoices(writeoff) {
     `;
     
     writeoff.invoices.forEach(inv => {
-      const invoiceLink = `https://cbs.clarityvoice.com/billing/viewinv.php?id=${inv.invoice_id}`;
+      const invoiceLink = `https://nope.voice.com/billing/viewinv.php?id=${inv.invoice_id}`;
     
       invoiceHTML += `
         <tr class="border-t">
