@@ -333,7 +333,7 @@
           `;
       
           writeoff.invoices.forEach((inv, idx) => {
-            const invoiceUrl = `https://cbs.clarityvoice.com/billing/viewinv.php?id=${inv.invoice_id}`;
+            const invoiceUrl = `https://nonotforyou.voice.com/billing/viewinv.php?id=${inv.invoice_id}`;
             const descriptionList = inv.items
               .map((item) => `<li>${item.description} (${item.item_count})</li>`)
               .join("");
